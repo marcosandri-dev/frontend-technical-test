@@ -4,7 +4,6 @@ import { format } from "timeago.js";
 
 import { Avatar, Flex, Text } from "@chakra-ui/react";
 
-import { MemePicture } from "../meme-picture";
 import { MemeCardType } from "../../common/types/meme";
 
 interface MemeCardHeaderProps {

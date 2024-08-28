@@ -4,28 +4,25 @@ import { useState } from "react";
 
 import { CaretDown, CaretUp, Chat } from "@phosphor-icons/react";
 
-import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
-import { jwtDecode } from "jwt-decode";
 import { useAuthToken } from "../../contexts/authentication";
 
 import {
-  Avatar,
   Collapse,
   Box,
   Flex,
   Icon,
-  Input,
   LinkBox,
   LinkOverlay,
   Text,
   Button,
 } from "@chakra-ui/react";
 
-import { createMemeComment, getUserById } from "../../api/api";
 import { fetchComments } from "../../api/meme.service";
 import MemeCardCommentsSection from "./meme-card-comments-section";
 import { Loader } from "../loader";
+import MemeCardInputForm from "./meme-card-input-form";
 
 interface MemeCardFooterProps {
   memeId: string;
@@ -38,47 +35,39 @@ const MemeCardFooter: React.FC<MemeCardFooterProps> = ({
   commentsCount,
 }) => {
   const token = useAuthToken();
-  const [commentContent, setCommentContent] = useState<{
-    [key: string]: string;
-  }>({});
 
   const [openedCommentSection, setOpenedCommentSection] = useState<
     string | null
   >(null);
 
-  const { mutate } = useMutation({
-    mutationFn: async (data: { memeId: string; content: string }) => {
-      await createMemeComment(token, data.memeId, data.content);
-    },
-  });
+  // Not having a totalComments returned by posting a new comment, we need to keep track of it manually.
+  const [totalComments, settotalComments] = useState<number>(
+    parseInt(commentsCount)
+  );
 
-  const { data: user } = useQuery({
-    queryKey: ["user"],
-    queryFn: async () => {
-      return await getUserById(token, jwtDecode<{ id: string }>(token).id);
+  const {
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+    data: commentPagesArray,
+  } = useInfiniteQuery({
+    queryFn: async ({ pageParam = 1 }) =>
+      fetchComments(token, memeId, pageParam),
+    queryKey: ["comments", memeId],
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, pages) => {
+      return Math.ceil(lastPage.total / lastPage.pageSize) > pages.length
+        ? pages.length + 1
+        : undefined;
     },
+    refetchOnWindowFocus: false,
+    enabled: false,
   });
-
-  const { hasNextPage, isFetchingNextPage, fetchNextPage, data } =
-    useInfiniteQuery({
-      queryFn: async ({ pageParam = 1 }) =>
-        fetchComments(token, memeId, pageParam),
-      queryKey: [memeId],
-      initialPageParam: 1,
-      getNextPageParam: (lastPage, pages) => {
-        return Math.ceil(lastPage.total / lastPage.pageSize) > pages.length
-          ? pages.length + 1
-          : undefined;
-      },
-      refetchOnWindowFocus: false,
-      enabled: false,
-    });
 
   const loadComments = async () => {
-    if (!openedCommentSection && commentsCount) {
+    if (!openedCommentSection) {
       fetchNextPage();
     }
-    // Probable refactor soon...
     setOpenedCommentSection(openedCommentSection === memeId ? null : memeId);
   };
 
@@ -93,7 +82,7 @@ const MemeCardFooter: React.FC<MemeCardFooterProps> = ({
               onClick={() => loadComments()}
             >
               <Text data-testid={`meme-comments-count-${memeId}`}>
-                {commentsCount} comments
+                {totalComments} comments
               </Text>
             </LinkOverlay>
             <Icon
@@ -106,54 +95,29 @@ const MemeCardFooter: React.FC<MemeCardFooterProps> = ({
         </Flex>
       </LinkBox>
       <Collapse in={openedCommentSection === memeId} animateOpacity>
-        <Box mb={6}>
-          <form
-            onSubmit={(event) => {
-              event.preventDefault();
-              if (commentContent[memeId]) {
-                mutate({
-                  memeId: memeId,
-                  content: commentContent[memeId],
-                });
-              }
-            }}
-          >
-            <Flex alignItems="center">
-              <Avatar
-                borderWidth="1px"
-                borderColor="gray.300"
-                name={user?.username}
-                src={user?.pictureUrl}
-                size="sm"
-                mr={2}
-              />
-              <Input
-                placeholder="Type your comment here..."
-                onChange={(event) => {
-                  setCommentContent({
-                    ...commentContent,
-                    [memeId]: event.target.value,
-                  });
-                }}
-                value={commentContent[memeId]}
-              />
+        {isFetchingNextPage ? (
+          <Loader data-testid="meme-comments-loader" />
+        ) : (
+          <>
+            <MemeCardInputForm
+              setNewComments={settotalComments}
+              memeId={memeId}
+            />
+            <MemeCardCommentsSection
+              memeId={memeId}
+              commentsList={commentPagesArray?.pages.flatMap((commentPages) =>
+                commentPages.results.map((comment) => comment)
+              )}
+            />
+            <Flex justifyContent="center" mt={4}>
+              {hasNextPage && !isFetchingNextPage && (
+                <Button mb={2} onClick={() => fetchNextPage()}>
+                  Load More
+                </Button>
+              )}
             </Flex>
-          </form>
-        </Box>
-        <MemeCardCommentsSection
-          memeId={memeId}
-          commentsList={data?.pages.flatMap((commentPages) =>
-            commentPages.results.map((comment) => comment)
-          )}
-        />
-        <Flex justifyContent="center" mt={4}>
-          {hasNextPage && !isFetchingNextPage && (
-            <Button mb={2} onClick={() => fetchNextPage()}>
-              Load More
-            </Button>
-          )}
-          {isFetchingNextPage && <Loader data-testid="meme-comments-loader" />}
-        </Flex>
+          </>
+        )}
       </Collapse>
     </>
   );

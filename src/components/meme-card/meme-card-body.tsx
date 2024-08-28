@@ -17,7 +17,6 @@ const MemeCardBody: React.FC<MemeCardBodyProps> = ({ meme }) => {
         texts={texts}
         dataTestId={`meme-picture-${id}`}
       />
-
       <Box>
         <Text fontWeight="bold" fontSize="medium" mb={2}>
           Description:

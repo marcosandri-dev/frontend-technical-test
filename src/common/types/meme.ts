@@ -1,9 +1,21 @@
-import { GetUserByIdResponse, MemeCommentResult } from "../../api/types";
+import {
+  GetMemeCommentsResponse,
+  GetUserByIdResponse,
+  MemeCommentResult,
+} from "../../api/types";
 
 // Types defined by API calls
 export type MemeCardAuthorType = GetUserByIdResponse;
 export type MemeCardCommentType = MemeCommentResult & {
   author: MemeCardAuthorType;
+};
+
+// Override for pagination system
+export type MemeCardCommentPageType = Omit<
+  GetMemeCommentsResponse,
+  "results"
+> & {
+  results: MemeCardCommentType[];
 };
 
 // Type for the business logic of the Meme Card

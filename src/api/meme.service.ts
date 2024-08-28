@@ -1,20 +1,32 @@
-import { MemeCardCommentType, MemeCardType } from "../common/types/meme";
+import {
+  MemeCardCommentPageType,
+  MemeCardCommentType,
+  MemeCardType,
+} from "../common/types/meme";
 import { getUserById, getMemeComments, getMemes } from "./api";
-import { MemeResult } from "./types";
+import { MemeCommentResult, MemeResult } from "./types";
+
+export async function addAuthorToComment(
+  token: string,
+  comment: MemeCommentResult
+): Promise<MemeCardCommentType> {
+  const author = await getUserById(token, comment.authorId);
+  return { ...comment, author };
+}
 
 // Fetch comments on click.
 export async function fetchComments(
   token: string,
   memeId: string,
   page: number
-) {
+): Promise<MemeCardCommentPageType> {
   const commentPage = await getMemeComments(token, memeId, page);
 
   // Deals with concurrent calls while addind the author to all comments
-  const promiseMeComments = commentPage.results.map(async (comment) => {
-    const author = await getUserById(token, comment.authorId);
-    return { ...comment, author };
-  });
+  const promiseMeComments: Promise<MemeCardCommentType>[] =
+    commentPage.results.map(async (comment) => {
+      return await addAuthorToComment(token, comment);
+    });
   const commentsWithAuthor: MemeCardCommentType[] =
     await Promise.all(promiseMeComments);
 
