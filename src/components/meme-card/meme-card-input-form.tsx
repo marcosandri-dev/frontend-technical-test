@@ -10,6 +10,7 @@ import { createMemeComment, getUserById } from "../../api/api";
 import { useAuthToken } from "../../contexts/authentication";
 import { jwtDecode } from "jwt-decode";
 import { MemeCardCommentPageType } from "../../common/types/meme";
+import { addAuthorToComment } from "../../api/meme.service";
 
 interface MemeCardInputFormProps {
   setNewComments: Dispatch<SetStateAction<number>>;
@@ -38,7 +39,8 @@ const MemeCardInputForm: React.FC<MemeCardInputFormProps> = ({
       return await createMemeComment(token, data.memeId, data.content);
     },
     onSuccess: async (newComment) => {
-      const newCommentWithUser = { ...newComment, author: user };
+      // User is not a good single source of truth.
+      const newCommentWithUser = await addAuthorToComment(token, newComment);
 
       // We need to update our data, by putting the comment on top of the first page.
       queryClient.setQueryData(
@@ -66,6 +68,7 @@ const MemeCardInputForm: React.FC<MemeCardInputFormProps> = ({
   return (
     <Box mb={6}>
       <form
+        data-testid={`comment-form-${memeId}`}
         onSubmit={(event) => {
           event.preventDefault();
           if (commentContent) {
@@ -86,6 +89,7 @@ const MemeCardInputForm: React.FC<MemeCardInputFormProps> = ({
             mr={2}
           />
           <Input
+            data-testid={`comment-input-${memeId}`}
             placeholder="Type your comment here..."
             onChange={(event) => {
               setCommentContent(event.target.value);
