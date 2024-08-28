@@ -1,4 +1,8 @@
-import { MemeCardCommentType, MemeCardType } from "../common/types/meme";
+import {
+  MemeCardCommentPageType,
+  MemeCardCommentType,
+  MemeCardType,
+} from "../common/types/meme";
 import { getUserById, getMemeComments, getMemes } from "./api";
 import { MemeResult } from "./types";
 
@@ -7,14 +11,16 @@ export async function fetchComments(
   token: string,
   memeId: string,
   page: number
-) {
+): Promise<MemeCardCommentPageType> {
   const commentPage = await getMemeComments(token, memeId, page);
 
-  // Deals with concurrent calls while addind the author to all comments
-  const promiseMeComments = commentPage.results.map(async (comment) => {
-    const author = await getUserById(token, comment.authorId);
-    return { ...comment, author };
-  });
+  // Deals with concurrent calls while adding the author to all comments
+  const promiseMeComments: Promise<MemeCardCommentType>[] =
+    commentPage.results.map(async (comment) => {
+      const author = await getUserById(token, comment.authorId);
+      return { ...comment, author };
+    });
+
   const commentsWithAuthor: MemeCardCommentType[] =
     await Promise.all(promiseMeComments);
 
