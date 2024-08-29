@@ -17,11 +17,11 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { Plus, Trash } from "@phosphor-icons/react";
 import { useMutation } from "@tanstack/react-query";
 
-import { Picture } from "../common/common";
-import { MemePictureText } from "../api/types";
 import { useAuthToken } from "../contexts/authentication";
 import { postMeme } from "../api/meme.service";
-import { MemeEditor } from "./meme-editor";
+import { MemeEditor } from "./create-meme/meme-editor";
+import { MemePictureText } from "../api/types";
+import { Picture } from "../common/common";
 
 interface CreateMemePageProps {}
 
