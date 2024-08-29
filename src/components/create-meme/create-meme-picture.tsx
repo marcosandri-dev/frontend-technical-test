@@ -30,7 +30,7 @@ const CreateMemePicture: React.FC<CreateMemePictureProps> = ({
   captionIndex,
 }) => {
   const handleSlideChange = (slideValue: number, key: string) => {
-    if (captionIndex) {
+    if (captionIndex !== null) {
       const newValues = {
         ...memePicture.texts[captionIndex],
         [key]: slideValue,
