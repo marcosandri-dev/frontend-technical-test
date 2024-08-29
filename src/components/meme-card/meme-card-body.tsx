@@ -1,5 +1,3 @@
-import React from "react";
-
 import { Box, Text } from "@chakra-ui/react";
 import { MemeCardType } from "../../common/types/meme";
 import { MemePicture } from "../meme-picture";

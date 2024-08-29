@@ -49,3 +49,19 @@ export type CreateCommentResponse = {
   authorId: string;
   memeId: string;
 };
+
+export type MemePictureText = {
+  content: string;
+  x: number;
+  y: number;
+};
+
+export type CreateMemeResponse = {
+  id: string;
+  authorId: string;
+  pictureUrl: string;
+  descripition: string;
+  texts: MemePictureText[];
+  commentsCount: number;
+  createdAt: string;
+};

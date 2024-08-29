@@ -3,8 +3,8 @@ import {
   MemeCardCommentType,
   MemeCardType,
 } from "../common/types/meme";
-import { getUserById, getMemeComments, getMemes } from "./api";
-import { MemeCommentResult, MemeResult } from "./types";
+import { getUserById, getMemeComments, getMemes, createMeme } from "./api";
+import { MemeCommentResult, MemePictureText, MemeResult } from "./types";
 
 export async function addAuthorToComment(
   token: string,
@@ -57,4 +57,26 @@ export async function getMemesService(token: string, page: number = 1) {
   memePage.results.push(...memesWithAuthorAndComments);
 
   return { ...memePage, results: memesWithAuthorAndComments };
+}
+
+export async function postMeme(
+  token: string,
+  picture: File,
+  description: string,
+  texts: MemePictureText[]
+) {
+  const formData = new FormData();
+
+  formData.append("Picture", picture);
+  formData.append("Description", description);
+
+  texts.forEach((text, index) => {
+    formData.append(`Texts[${index}][Content]`, text.content);
+    formData.append(`Texts[${index}][X]`, text.x.toString());
+    formData.append(`Texts[${index}][Y]`, text.y.toString());
+  });
+
+  const newMeme = await createMeme(token, formData);
+
+  return newMeme;
 }

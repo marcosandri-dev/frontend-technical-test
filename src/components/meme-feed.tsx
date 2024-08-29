@@ -1,4 +1,3 @@
-import React from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Box, Button, Flex, StackDivider, VStack } from "@chakra-ui/react";
 

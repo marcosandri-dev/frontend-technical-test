@@ -4,6 +4,7 @@ import {
   GetMemesResponse,
   GetMemeCommentsResponse,
   CreateCommentResponse,
+  CreateMemeResponse,
 } from "./types";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
@@ -122,5 +123,24 @@ export async function createMemeComment(
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({ content }),
+  }).then((res) => checkStatus(res).json());
+}
+
+/**
+ * Create a comment for a meme
+ * @param token
+ * @param memeId
+ * @param content
+ */
+export async function createMeme(
+  token: string,
+  formData: FormData
+): Promise<CreateMemeResponse> {
+  return await fetch(`${BASE_URL}/memes`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
   }).then((res) => checkStatus(res).json());
 }

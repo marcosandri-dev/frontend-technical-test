@@ -1,5 +1,3 @@
-import React from "react";
-
 import { VStack } from "@chakra-ui/react";
 
 import MemeCardFooter from "./meme-card-footer";
