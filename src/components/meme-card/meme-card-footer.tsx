@@ -1,5 +1,3 @@
-import React from "react";
-
 import { useState } from "react";
 
 import { CaretDown, CaretUp, Chat } from "@phosphor-icons/react";

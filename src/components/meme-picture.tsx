@@ -11,14 +11,14 @@ export type MemePictureProps = {
   dataTestId?: string;
 };
 
-const REF_WIDTH = 800;
-const REF_HEIGHT = 450;
-const REF_FONT_SIZE = 36;
+export const REF_WIDTH = 800;
+export const REF_HEIGHT = 450;
+export const REF_FONT_SIZE = 36;
 
 export const MemePicture: React.FC<MemePictureProps> = ({
   pictureUrl,
   texts: rawTexts,
-  dataTestId = '',
+  dataTestId = "",
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const dimensions = useDimensions(containerRef, true);

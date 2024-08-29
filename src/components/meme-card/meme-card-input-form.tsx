@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { Box, Flex, Avatar, Input } from "@chakra-ui/react";
 import {
   InfiniteData,

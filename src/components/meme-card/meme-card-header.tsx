@@ -1,5 +1,3 @@
-import React from "react";
-
 import { format } from "timeago.js";
 
 import { Avatar, Flex, Text } from "@chakra-ui/react";

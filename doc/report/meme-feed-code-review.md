@@ -18,6 +18,7 @@ Your role here will be to:
 ## Other issues
 
 - It seems that changing the code after an error doesn't produce changes in the application; along with the state of login not being persisted, this is a loss of development time on refresh.
+- There seems to be a little issue with the timezone for the header "x hours ago", but probably linked to the backend.
 
 # The solution
 
@@ -69,7 +70,8 @@ Other considerations:
 
 For the purpose of the exercise and being in a reasonable delivery time some aspects were avoided:
 
-- Catching errors from the various API calls.
-- Creating new UI (from confirmation/error toasters messages) with the exepction for the load more button.
+- Catching errors from the various API calls
+- Creating new UI (from confirmation/error toasters messages) with the exepction for the load more button
 - Elegant UX solutions (like infinite scrolling without a load more button or animations)
-- Using useMemo or any other render optimisation methods.
+- Creating tests
+- Using useMemo or any other render optimisation methods

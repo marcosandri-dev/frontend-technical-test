@@ -1,5 +1,4 @@
 import { Avatar, Box, Flex, Text, VStack } from "@chakra-ui/react";
-import React from "react";
 import { format } from "timeago.js";
 import { MemeCardCommentType } from "../../common/types/meme";
 
