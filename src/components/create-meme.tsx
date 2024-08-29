@@ -64,7 +64,6 @@ const CreateMemePage: React.FC<CreateMemePageProps> = () => {
 
   const { mutate } = useMutation({
     mutationFn: async () => {
-      console.log("mutation", token, picture, description, texts);
       if (picture) {
         return await postMeme(token, picture.file, description, texts);
       }

@@ -78,5 +78,5 @@ export async function postMeme(
 
   const newMeme = await createMeme(token, formData);
 
-  console.log("formData", newMeme);
+  return newMeme;
 }
