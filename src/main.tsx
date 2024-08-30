@@ -15,7 +15,7 @@ import {
 // Create a new router instance
 const router = createRouter({
   routeTree,
-  context: { authState: { isAuthenticated: false } },
+  context: { authState: { isAuthenticated: false, isLoading: true } },
 });
 
 // Register the router instance for type safety
@@ -44,6 +44,6 @@ if (!rootElement.innerHTML) {
           </AuthenticationProvider>
         </ChakraProvider>
       </QueryClientProvider>
-    </StrictMode>,
+    </StrictMode>
   );
 }
